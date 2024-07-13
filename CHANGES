@@ -1,0 +1,56 @@
+Changes for version 1.04:
+
+http://www.freebsd.org/cgi/query-pr.cgi?pr=ports/94378
+Succinctly, the #define for EXTRA in parse.c needs to be (at least) 12,
+
+Changes for version 1.03:
+
+Botched some prototypes.  1.02 wouldn't compile.
+
+Changes for version 1.02:
+
+I wasn't wait()ing for m4 to quit, so it hung around as a zombie.
+When using RandomPlacement, the window is placed in such a position as to ensure
+	that the cursor is inside the window.  This makes
+	focus-follows-mouse (e.g. me) happier.
+
+Changes for version 1.01:
+
+Turned on -DSHAPE to get shaped window titles. (Cool!)
+Removed shape detection code from ShapePieMenu();
+Added prototypes (duh - this is 1998, everyone has gcc)
+Fixed problems turned up by use of prototypes (double duh)
+Made a few functions static.
+Changed operation of pie menus.  If you release the button without making a
+	selection, the mouse was and is grabbed.  Only, now, the menu
+	tracks the pointer, to make it more obvious that the pointer
+	is grabbed.  It also makes it a LOT easier to dismiss the
+	menu.
+Nobody used WarpToWindowEdge(), so it's gone.
+Nobody used MkQte() either.
+With shaped pie menus, we need to draw a border, so there's now code to
+	do it in PaintPieMenuEntry.  Pity the code's not exactly right.
+Added a -s switch to m4 invocation so we could get accurate error
+	messages, as well as setting yylineno.
+Removed the umd group cruft.  Astoundingly lame.
+Changed operation of the panner.  Button 1 now moves the panner window using
+	a grid the size of the window.  Button 3 still gives you the
+	old operation which lets you put the panner window anywhere
+	you want.  Old grid operation, when you held a modifier key
+	while moving the panner window, removed.
+Bison didn't like the default action on the LB .... RB statements, so I
+	added a null action.
+flex internals aren't compatible with at&t lex internals, so the at&t
+	lex internal cruft got removed and replaced with documented
+	flex cruft.
+
+Changes from piewm distribution to version 1.00:
+
+Removed Xpm from distribution since it's standard
+Added shaped menus, but disabled use.
+Removed a few private references to Display *.
+Added another parameter to select() call.
+Added documentation to system.twmrc
+Added my own .twmrc to sample-twmrc
+Updated Makefile by running xmkmf
+

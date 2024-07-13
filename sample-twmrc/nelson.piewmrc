@@ -1,0 +1,63 @@
+# This customizes the "Host" and "Person" menus. 
+
+# Read in the default system.twmrc file, configured for pie menus.
+include(/usr/local/src/piewm/system.twmrc)
+
+BorderColor			"gray25"
+IconBorderColor			"gray50"
+TitleForeground			"black"
+TitleBackground			"green"
+MenuForeground			"blue"
+MenuBackground			"white"
+MenuTitleForeground		"white"
+MenuTitleBackground		"black"
+IconForeground			"black"
+IconBackground			"white"
+VirtualDesktopBackground	"gray50"
+PannerBackground		"gray50"
+DefaultForeground		"gray85"
+MenuShadowColor			"gray25"
+IconBorderColor			"gray85"
+IconManagerBackground		"white"
+IconManagerForeground		"black"
+
+# Movable pie menus look weird with shadows.
+#nomenushadows
+
+interpolatemenucolors
+
+# size of desktop
+VirtualDesktop		"1x7"
+
+# we really *do* want to do opaque moves.
+OpaqueMove
+
+# Tell tvtwm where to read xbm and xpm files from.
+IconDirectory		"~/bitmaps"
+
+# we've got plenty of CPU
+Zoom			100
+
+# we want to see names in the virtual desktop
+ShowVirtualNames
+
+# we want the virtual desktop on top
+Sticky VirtualDesktop
+
+# we want sticky windows to be above.
+StickyAbove
+
+# when we move the panner, repaint everything.
+PannerOpaqueScroll
+
+# automatically raise these windows when they get the focus
+AutoRaise { "emacs" "xterm" }
+
+NoTitle { "asclock" "wmavgload" "Virtual Desktop" }
+IconManagerDontShow { "asclock" "wmavgload" "Virtual Desktop" }
+
+piemenu "Host" {
+}
+
+piemenu "Person" {
+}

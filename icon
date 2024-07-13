@@ -1,0 +1,56 @@
+menus.c:490:    y_offset = mi->item_num * Scr->EntryHeight;
+menus.c:492:    if (mi->func != F_TITLE) {
+menus.c:499:	if (mi->state) {
+menus.c:500:	    XSetForeground(dpy, Scr->NormalGC, mi->hi_back);
+menus.c:505:	    FBF(mi->hi_fore, mi->hi_back, font->font->fid);
+menus.c:506:	    XDrawString(dpy, mr->w, Scr->NormalGC, mi->x,
+menus.c:507:			text_y, mi->item, mi->strlen);
+menus.c:511:	    if (mi->user_colors || !exposure) {
+menus.c:512:		XSetForeground(dpy, Scr->NormalGC, mi->back);
+menus.c:517:		FBF(mi->fore, mi->back, font->font->fid);
+menus.c:522:	    XDrawString(dpy, mr->w, gc, mi->x,
+menus.c:523:			text_y, mi->item, mi->strlen);
+menus.c:526:	if (mi->func == F_MENU || mi->func == F_MENUFUNC) {
+menus.c:550:	XSetForeground(dpy, Scr->NormalGC, mi->back);
+menus.c:558:	    XSetForeground(dpy, Scr->NormalGC, mi->fore);
+menus.c:569:	    y = ((mi->item_num+1) * Scr->EntryHeight)-1;
+menus.c:578:	FBF(mi->fore, mi->back, font->font->fid);
+menus.c:580:	XDrawString(dpy, mr->w, Scr->NormalGC, mi->x,
+menus.c:581:	    text_y, mi->item, mi->strlen);
+menus.c:594:	for (mi = mr->first; mi != NULL; mi = mi->next) {
+menus.c:595:	    int y_offset = mi->item_num * Scr->EntryHeight;
+menus.c:771:	entry = mi->item_num;
+menus.c:786:	for (i = 0, mi = ActiveMenu->first; mi != NULL; i++, mi=mi->next) {
+menus.c:3631:  for (mi = mr->first; mi != NULL; mi = mi->next) {
+menus.c:3642:    if (((mi->func == F_PIEMENU) ||
+menus.c:3643:	 (mi->func == F_MENU)) &&
+menus.c:3650:    x = mi->x; y = mi->y;
+menus.c:3651:    width = mi->width; height = mi->height;
+menus.c:3654:    if (mi->state) {
+menus.c:3655:	XSetForeground(dpy, Scr->NormalGC, mi->hi_back);
+menus.c:3660:	FBF(mi->hi_fore, mi->hi_back, font->font->fid);
+menus.c:3662:	if (mi->icon != None) {
+menus.c:3663:	  XSetClipMask(dpy, Scr->NormalGC, mi->mask);
+menus.c:3664:	  XSetClipOrigin(dpy, Scr->NormalGC, mi->x, mi->y);
+menus.c:3665:	  XCopyArea(dpy, mi->icon, mr->w, Scr->NormalGC,
+menus.c:3666:		    0, 0, mi->width, mi->height, mi->x, mi->y);
+menus.c:3671:		      mi->item, mi->strlen);
+menus.c:3674:	if (mi->user_colors || !exposure) {
+menus.c:3675:	    XSetForeground(dpy, Scr->NormalGC, mi->back);
+menus.c:3680:	    FBF(mi->fore, mi->back, font->font->fid);
+menus.c:3682:	    if (mi->icon != None) {
+menus.c:3683:	      XSetClipMask(dpy, Scr->NormalGC, mi->mask);
+menus.c:3684:	      XSetClipOrigin(dpy, Scr->NormalGC, mi->x, mi->y);
+menus.c:3685:	      XCopyArea(dpy, mi->icon, mr->w, Scr->NormalGC,
+menus.c:3686:			0, 0, mi->width, mi->height, mi->x, mi->y);
+menus.c:3691:			  mi->item, mi->strlen);
+menus.c:3694:	    FBF(mi->fore, mi->back, font->font->fid);
+menus.c:3696:	    if (mi->icon != None) {
+menus.c:3697:	      XSetClipMask(dpy, Scr->NormalGC, mi->mask);
+menus.c:3698:	      XSetClipOrigin(dpy, Scr->NormalGC, mi->x, mi->y);
+menus.c:3699:	      XCopyArea(dpy, mi->icon, mr->w, Scr->NormalGC,
+menus.c:3700:			0, 0, mi->width, mi->height, mi->x, mi->y);
+menus.c:3705:			  mi->item, mi->strlen);
+menus.c:3745:  for (mi = mr->first; mi != NULL; mi = mi->next) {
+menus.c:3747:		   mi->x, mi->y,
+menus.c:3748:		   mi->width, mi->height);

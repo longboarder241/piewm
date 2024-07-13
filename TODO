@@ -1,0 +1,5 @@
+Things that still need doing:
+
+Clean up pixmap handling.  The code seems to be an awful mess.
+Add 3D borders to pie menu items (partially done)
+Remove more cruft.

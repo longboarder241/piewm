@@ -1,0 +1,79 @@
+#
+# Here is an Imakefile for piewm.  The below defines for make are
+# neccessary to have things work as expected, please don't remove
+# any of them.
+#
+
+         YFLAGS = -d
+        DEPLIBS = $(DEPXMULIB) $(DEPEXTENSIONLIB) $(DEPXLIB)
+
+# real programmers use Emacs
+           TAGS = etags
+
+# change if you want it to look elsewhere for its files.
+       PIEWMDIR = /usr/local/lib/piewm
+
+#
+# Keep uncommented to allow the xloadimage program by Jim Frost to
+# perform your background loading.  (thus allowing loading of
+# other image formats besides Xpm or Xbm)
+#                                 Chris P. Ross
+#                                 <cross@eng.umd.edu>
+    XLOADIM_DEF = -DXLOADIMAGE=\"/usr/local/bin/xloadimage\"
+        MATHLIB = -lm
+  LOCAL_DEFINES = -DSHAPE 
+
+/**/#   Ultrix doesn't have a mkstemp in libc...
+#ifdef UltrixArchitecture
+  ULTRIX_DEFINES = -DNOSTEMP
+#endif
+
+LOCAL_LIBRARIES = $(XMULIB) $(EXTENSIONLIB) $(XLIB) $(MATHLIB) -lXpm
+       LINTLIBS = $(LINTXMU) $(LINTEXTENSIONLIB) $(LINTXLIB)
+        DEFINES = ExtensionDefines $(LOCAL_DEFINES) $(SIGNAL_DEFINES) $(ULTRIX_DEFINES)
+
+           SRCS = gram.c lex.c deftwmrc.c add_window.c gc.c list.c twm.c \
+		parse.c menus.c events.c resize.c util.c version.c iconmgr.c \
+		cursor.c icons.c vdt.c move.c LocPixmap.c
+
+           OBJS = gram.o lex.o deftwmrc.o add_window.o gc.o list.o twm.o \
+		parse.o menus.o events.o resize.o util.o version.o iconmgr.o \
+		cursor.o icons.o vdt.o move.o LocPixmap.o
+
+AllTarget(piewm ssetroot)
+
+SpecialObjectRule(parse.o, vdt.c, '-DPIEWMDIR="$(PIEWMDIR)"')
+SpecialObjectRule(vdt.o, vdt.c, $(XLOADIM_DEF))
+#if !HasPutenv
+SpecialObjectRule(util.o, ,-DNOPUTENV)
+#endif
+
+depend:: lex.c gram.c deftwmrc.c 
+
+ComplexProgramTarget(piewm)
+NormalProgramTarget(ssetroot,ssetroot.o,,$(LOCAL_LIBRARIES),)
+
+MakeDirectories(install,$(TWMDIR))
+InstallNonExec(system.twmrc,$(TWMDIR))
+# InstallNamedProg(ssetroot,xsetroot,$(BINDIR))
+
+gram.h gram.c: gram.y
+	$(YACC) $(YFLAGS) gram.y
+	$(MV) y.tab.c gram.c
+	$(MV) y.tab.h gram.h
+
+clean::
+	$(RM) y.tab.h y.tab.c lex.yy.c gram.h gram.c lex.c deftwmrc.c 
+
+deftwmrc.c:  system.twmrc
+	$(RM) $@
+	@echo '/* ' >>$@
+	@echo ' * This file is generated automatically from the default' >>$@
+	@echo ' * twm bindings file system.twmrc by the twm Imakefile.' >>$@
+	@echo ' */' >>$@
+	@echo '' >>$@
+	@echo 'char *defTwmrc[] = {' >>$@
+	sed -e '/^#/d' -e 's/"/\\"/g' -e 's/^/    "/' -e 's/$$/",/' \
+		system.twmrc >>$@
+	@echo '    (char *) 0 };' >>$@
+

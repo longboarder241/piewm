@@ -1,0 +1,810 @@
+add_window.c:166:    tmp_win->w = w;
+add_window.c:167:    tmp_win->zoomed = ZOOM_NONE;
+add_window.c:168:    tmp_win->iconmgr = iconmgr;
+add_window.c:169:    tmp_win->iconmgrp = (IconMgr *)iconp;
+add_window.c:170:    tmp_win->cmaps.number_cwins = 0;
+add_window.c:172:    XSelectInput(dpy, tmp_win->w, PropertyChangeMask);
+add_window.c:173:    XGetWindowAttributes(dpy, tmp_win->w, &tmp_win->attr);
+add_window.c:174:    XFetchName(dpy, tmp_win->w, &tmp_win->name);
+add_window.c:175:    tmp_win->class = NoClass;
+add_window.c:176:    XGetClassHint(dpy, tmp_win->w, &tmp_win->class);
+add_window.c:183:    if (tmp_win->attr.width > Scr->MaxWindowWidth)
+add_window.c:184:      tmp_win->attr.width = Scr->MaxWindowWidth;
+add_window.c:185:    if (tmp_win->attr.height > Scr->MaxWindowHeight)
+add_window.c:186:      tmp_win->attr.height = Scr->MaxWindowHeight;
+add_window.c:188:    tmp_win->wmhints = XGetWMHints(dpy, tmp_win->w);
+add_window.c:189:    if (tmp_win->wmhints && (tmp_win->wmhints->flags & WindowGroupHint))
+add_window.c:190:	tmp_win->group = tmp_win->wmhints->window_group;
+add_window.c:192:	tmp_win->group = None;
+add_window.c:194:    if (!XGetWMNormalHints (dpy, tmp_win->w, &tmp_win->hints, &supplied))
+add_window.c:195:      tmp_win->hints.flags = 0;
+add_window.c:202:    tmp_win->transient = Transient(tmp_win->w);
+add_window.c:214:    if (tmp_win->transient || 
+add_window.c:215:	(tmp_win->hints.flags & USPosition) ||
+add_window.c:216:        ((tmp_win->hints.flags & PPosition) && Scr->UsePPosition &&
+add_window.c:218:	  tmp_win->attr.x != 0 || tmp_win->attr.y != 0)))
+add_window.c:221:    if (tmp_win->name == NULL)
+add_window.c:222:	tmp_win->name = NoName;
+add_window.c:223:    if (tmp_win->class.res_name == NULL)
+add_window.c:224:    	tmp_win->class.res_name = NoName;
+add_window.c:225:    if (tmp_win->class.res_class == NULL)
+add_window.c:226:    	tmp_win->class.res_class = NoName;
+add_window.c:228:    tmp_win->full_name = tmp_win->name;
+add_window.c:229:    namelen = strlen (tmp_win->name);
+add_window.c:232:	getTWM_FLAGS(tmp_win->w, &tmp_win->flags);
+add_window.c:235:	tmp_win->sticky = 
+add_window.c:236:	    LookInList(Scr->StickyL, tmp_win->full_name, &tmp_win->class)?1:0;
+add_window.c:237:	if (tmp_win->w == Scr->Panner)
+add_window.c:238:	    tmp_win->sticky = True;
+add_window.c:240:	if (tmp_win->flags & TWM_FLAGS_VALID) {
+add_window.c:241:	    if (tmp_win->flags & TWM_FLAGS_STICKY)
+add_window.c:242:		tmp_win->sticky = True;
+add_window.c:244:		tmp_win->sticky = False;
+add_window.c:251:    tmp_win->highlight = Scr->Highlight && 
+add_window.c:252:	(!LookInList(Scr->NoHighlight, tmp_win->full_name, 
+add_window.c:253:	    &tmp_win->class));
+add_window.c:255:    tmp_win->stackmode = Scr->StackMode &&
+add_window.c:256:	(!LookInList(Scr->NoStackModeL, tmp_win->full_name, 
+add_window.c:257:	    &tmp_win->class));
+add_window.c:259:    tmp_win->titlehighlight = Scr->TitleHighlight && 
+add_window.c:260:	(!LookInList(Scr->NoTitleHighlight, tmp_win->full_name, 
+add_window.c:261:	    &tmp_win->class));
+add_window.c:263:    tmp_win->auto_raise = LookInList(Scr->AutoRaise, tmp_win->full_name,
+add_window.c:264:					    &tmp_win->class)?1:0;
+add_window.c:265:    if (tmp_win->auto_raise) Scr->NumAutoRaises++;
+add_window.c:266:    tmp_win->iconify_by_unmapping = Scr->IconifyByUnmapping;
+add_window.c:269:	tmp_win->iconify_by_unmapping = iconmgr ? FALSE :
+add_window.c:270:	    !LookInList(Scr->DontIconify, tmp_win->full_name,
+add_window.c:271:		&tmp_win->class);
+add_window.c:273:    tmp_win->iconify_by_unmapping |= 
+add_window.c:274:	(LookInList(Scr->IconifyByUn, tmp_win->full_name,
+add_window.c:275:	    &tmp_win->class)?1:0);
+add_window.c:277:    if (LookInList(Scr->WindowRingL, tmp_win->full_name, &tmp_win->class)) {
+add_window.c:279:	    tmp_win->ring.next = Scr->Ring->ring.next;
+add_window.c:283:	    tmp_win->ring.prev = Scr->Ring;
+add_window.c:285:	    tmp_win->ring.next = tmp_win->ring.prev = Scr->Ring = tmp_win;
+add_window.c:288:      tmp_win->ring.next = tmp_win->ring.prev = NULL;
+add_window.c:289:    tmp_win->ring.cursor_valid = False;
+add_window.c:291:    tmp_win->squeeze_info = NULL;
+add_window.c:298:	if (!LookInList (Scr->DontSqueezeTitleL, tmp_win->full_name, 
+add_window.c:299:			 &tmp_win->class)) {
+add_window.c:300:	    tmp_win->squeeze_info = (SqueezeInfo *)
+add_window.c:301:	      LookInList (Scr->SqueezeTitleL, tmp_win->full_name,
+add_window.c:302:			  &tmp_win->class);
+add_window.c:303:	    if (!tmp_win->squeeze_info) {
+add_window.c:306:		  tmp_win->squeeze_info = &default_squeeze;
+add_window.c:312:    tmp_win->old_bw = tmp_win->attr.border_width;
+add_window.c:315:    	tmp_win->frame_bw = tmp_win->old_bw;
+add_window.c:317:    	tmp_win->frame_bw = Scr->BorderWidth;
+add_window.c:319:    bw2 = tmp_win->frame_bw * 2;
+add_window.c:321:    tmp_win->title_height = Scr->TitleHeight + tmp_win->frame_bw;
+add_window.c:323:        tmp_win->title_height = 0;
+add_window.c:324:    if (LookInList(Scr->MakeTitle, tmp_win->full_name, &tmp_win->class))
+add_window.c:325:        tmp_win->title_height = Scr->TitleHeight + tmp_win->frame_bw;
+add_window.c:326:    if (LookInList(Scr->NoTitle, tmp_win->full_name, &tmp_win->class))
+add_window.c:327:        tmp_win->title_height = 0;
+add_window.c:329:    tmp_win->icon_title = !Scr->NoIconTitle;
+add_window.c:330:    if (LookInList(Scr->NoIconTitleL, tmp_win->full_name, &tmp_win->class))
+add_window.c:331:        tmp_win->icon_title = False;
+add_window.c:332:    if (LookInList(Scr->IconTitleL, tmp_win->full_name, &tmp_win->class))
+add_window.c:333:        tmp_win->icon_title = True;
+add_window.c:336:    if (tmp_win->transient && !Scr->DecorateTransients)
+add_window.c:337:	tmp_win->title_height = 0;
+add_window.c:339:    if (LookInList(Scr->StartIconified, tmp_win->full_name, &tmp_win->class))
+add_window.c:341:	if (!tmp_win->wmhints)
+add_window.c:343:	    tmp_win->wmhints = (XWMHints *)malloc(sizeof(XWMHints));
+add_window.c:344:	    tmp_win->wmhints->flags = 0;
+add_window.c:346:	tmp_win->wmhints->initial_state = IconicState;
+add_window.c:347:	tmp_win->wmhints->flags |= StateHint;
+add_window.c:356:	    tmp_win->attr.x,
+add_window.c:357:	    tmp_win->attr.y,
+add_window.c:358:	    tmp_win->attr.width,
+add_window.c:359:	    tmp_win->attr.height);
+add_window.c:363:	int delta = tmp_win->attr.border_width - tmp_win->frame_bw;
+add_window.c:364:	tmp_win->attr.x += gravx * delta;
+add_window.c:365:	tmp_win->attr.y += gravy * delta;
+add_window.c:368:    tmp_win->title_width = tmp_win->attr.width;
+add_window.c:370:    if (tmp_win->old_bw) XSetWindowBorderWidth (dpy, tmp_win->w, 0);
+add_window.c:372:    tmp_win->name_width = XTextWidth(Scr->TitleBarFont.font, tmp_win->name,
+add_window.c:375:    if (XGetWindowProperty (dpy, tmp_win->w, XA_WM_ICON_NAME, 0L, 200L, False,
+add_window.c:377:			    &bytesafter,(unsigned char **)&tmp_win->icon_name))
+add_window.c:378:	tmp_win->icon_name = tmp_win->name;
+add_window.c:380:    if (tmp_win->icon_name == NULL)
+add_window.c:381:	tmp_win->icon_name = tmp_win->name;
+add_window.c:383:    tmp_win->iconified = FALSE;
+add_window.c:384:    tmp_win->icon = FALSE;
+add_window.c:385:    tmp_win->icon_on = FALSE;
+add_window.c:398:    if (XGetGeometry(dpy, tmp_win->w, &JunkRoot, &JunkX, &JunkY,
+add_window.c:407:    tmp_win->next = Scr->TwmRoot.next;
+add_window.c:410:    tmp_win->prev = &Scr->TwmRoot;
+add_window.c:415:    tmp_win->border = Scr->BorderColor;
+add_window.c:416:    tmp_win->icon_border = Scr->IconBorderColor;
+add_window.c:417:    tmp_win->border_tile.fore = Scr->BorderTileC.fore;
+add_window.c:418:    tmp_win->border_tile.back = Scr->BorderTileC.back;
+add_window.c:419:    tmp_win->title.fore = Scr->TitleC.fore;
+add_window.c:420:    tmp_win->title.back = Scr->TitleC.back;
+add_window.c:421:    tmp_win->iconc.fore = Scr->IconC.fore;
+add_window.c:422:    tmp_win->iconc.back = Scr->IconC.back;
+add_window.c:428:	tmp_win->virtual.fore = Scr->VirtualC.fore;
+add_window.c:430:	tmp_win->virtual.fore = Scr->TitleC.fore;
+add_window.c:432:	tmp_win->virtual.back = Scr->VirtualC.back;
+add_window.c:434:	tmp_win->virtual.back = Scr->TitleC.back;
+add_window.c:437:	GetColorFromList(Scr->TitleForegroundL, tmp_win->full_name, &tmp_win->class,
+add_window.c:438:	    &tmp_win->virtual.fore);
+add_window.c:439:	GetColorFromList(Scr->TitleBackgroundL, tmp_win->full_name, &tmp_win->class,
+add_window.c:440:	    &tmp_win->virtual.back);
+add_window.c:441:	GetColorFromList(Scr->VirtualForegroundL, tmp_win->full_name, &tmp_win->class,
+add_window.c:442:	    &tmp_win->virtual.fore);
+add_window.c:443:	GetColorFromList(Scr->VirtualBackgroundL, tmp_win->full_name, &tmp_win->class,
+add_window.c:444:	    &tmp_win->virtual.back);
+add_window.c:446:    GetColorFromList(Scr->BorderColorL, tmp_win->full_name, &tmp_win->class,
+add_window.c:447:	&tmp_win->border);
+add_window.c:448:    GetColorFromList(Scr->IconBorderColorL, tmp_win->full_name, &tmp_win->class,
+add_window.c:449:	&tmp_win->icon_border);
+add_window.c:450:    GetColorFromList(Scr->BorderTileForegroundL, tmp_win->full_name,
+add_window.c:451:	&tmp_win->class, &tmp_win->border_tile.fore);
+add_window.c:452:    GetColorFromList(Scr->BorderTileBackgroundL, tmp_win->full_name,
+add_window.c:453:	&tmp_win->class, &tmp_win->border_tile.back);
+add_window.c:454:    GetColorFromList(Scr->TitleForegroundL, tmp_win->full_name, &tmp_win->class,
+add_window.c:455:	&tmp_win->title.fore);
+add_window.c:456:    GetColorFromList(Scr->TitleBackgroundL, tmp_win->full_name, &tmp_win->class,
+add_window.c:457:	&tmp_win->title.back);
+add_window.c:458:    GetColorFromList(Scr->IconForegroundL, tmp_win->full_name, &tmp_win->class,
+add_window.c:459:	&tmp_win->iconc.fore);
+add_window.c:460:    GetColorFromList(Scr->IconBackgroundL, tmp_win->full_name, &tmp_win->class,
+add_window.c:461:	&tmp_win->iconc.back);
+add_window.c:466:    tmp_win->frame_width = tmp_win->attr.width;
+add_window.c:467:    tmp_win->frame_height = tmp_win->attr.height + tmp_win->title_height;
+add_window.c:471:    attributes.border_pixel = tmp_win->border;
+add_window.c:476:    if (tmp_win->attr.save_under) {
+add_window.c:482:	if (tmp_win->sticky && Scr->StickyAbove)
+add_window.c:483:	    tmp_win->root = Scr->Root;
+add_window.c:485:	    tmp_win->root = Scr->VirtualDesktop;
+add_window.c:487:	tmp_win->virtualWindow = MakeVirtual(tmp_win,
+add_window.c:488:	    tmp_win->frame_x, tmp_win->frame_y,
+add_window.c:489:	    tmp_win->frame_width, tmp_win->frame_height,
+add_window.c:490:	    tmp_win->virtual.back, tmp_win->border);
+add_window.c:493:	tmp_win->root = Scr->Root;
+add_window.c:495:    tmp_win->frame = XCreateWindow (dpy, tmp_win->root, 0, 0,
+add_window.c:496:				    (unsigned int) tmp_win->frame_width,
+add_window.c:497:				    (unsigned int) tmp_win->frame_height,
+add_window.c:498:				    (unsigned int) tmp_win->frame_bw,
+add_window.c:502:    if (tmp_win->title_height)
+add_window.c:507:	attributes.border_pixel = tmp_win->border;
+add_window.c:508:	attributes.background_pixel = tmp_win->title.back;
+add_window.c:509:	tmp_win->title_w = XCreateWindow (dpy, tmp_win->frame, 
+add_window.c:510:					  -tmp_win->frame_bw,
+add_window.c:511:					  -tmp_win->frame_bw,
+add_window.c:512:					  (unsigned int) tmp_win->attr.width, 
+add_window.c:514:					  (unsigned int) tmp_win->frame_bw,
+add_window.c:521:	tmp_win->title_w = 0;
+add_window.c:522:	tmp_win->squeeze_info = NULL;
+add_window.c:525:    if (tmp_win->highlight)
+add_window.c:527:	tmp_win->gray = XCreatePixmapFromBitmapData(dpy, Scr->Root, 
+add_window.c:529:	    tmp_win->border_tile.fore, tmp_win->border_tile.back,
+add_window.c:535:	tmp_win->gray = None;
+add_window.c:538:    if (tmp_win->title_w) {
+add_window.c:541:	XMoveWindow (dpy, tmp_win->title_w,
+add_window.c:542:		     tmp_win->title_x, tmp_win->title_y);
+add_window.c:543:	XDefineCursor(dpy, tmp_win->title_w, Scr->TitleCursor);
+add_window.c:550:    if (tmp_win->w == Scr->Panner)
+add_window.c:553:    XChangeWindowAttributes (dpy, tmp_win->w, valuemask, &attributes);
+add_window.c:557:	XShapeSelectInput (dpy, tmp_win->w, ShapeNotifyMask);
+add_window.c:560:    if (tmp_win->title_w) {
+add_window.c:561:	XMapWindow (dpy, tmp_win->title_w);
+add_window.c:570:	XShapeSelectInput (dpy, tmp_win->w, ShapeNotifyMask);
+add_window.c:571:	XShapeQueryExtents (dpy, tmp_win->w,
+add_window.c:574:	tmp_win->wShaped = boundingShaped;
+add_window.c:578:    if (!tmp_win->iconmgr)
+add_window.c:579:	XAddToSaveSet(dpy, tmp_win->w);
+add_window.c:581:    XReparentWindow(dpy, tmp_win->w, tmp_win->frame, 0, tmp_win->title_height);
+add_window.c:588:    tmp_win->mapped = FALSE;
+add_window.c:595:	if ((PlaceX + tmp_win->attr.width) > Scr->MyDisplayWidth)
+add_window.c:597:	if ((PlaceY + tmp_win->attr.height) > Scr->MyDisplayHeight)
+add_window.c:600:	tmp_win->attr.x = PlaceX;
+add_window.c:601:	tmp_win->attr.y = PlaceY;
+add_window.c:604:	if (tmp_win->root == Scr->VirtualDesktop) {
+add_window.c:605:	    tmp_win->attr.x += Scr->vdtPositionX;
+add_window.c:606:	    tmp_win->attr.y += Scr->vdtPositionY;
+add_window.c:609:	if (!(tmp_win->wmhints && tmp_win->wmhints->flags & StateHint &&
+add_window.c:610:	      tmp_win->wmhints->initial_state == IconicState))
+add_window.c:667:						tmp_win->name, namelen));
+add_window.c:679:			      tmp_win->name, namelen);
+add_window.c:681:	    AddingW = tmp_win->attr.width + bw2;
+add_window.c:682:	    AddingH = tmp_win->attr.height + tmp_win->title_height + bw2;
+add_window.c:686:	    if (tmp_win->root == Scr->VirtualDesktop)
+add_window.c:687:		XMoveWindow(dpy, tmp_win->frame, AddingX+Scr->vdtPositionX,
+add_window.c:690:		XMoveWindow(dpy, tmp_win->frame, AddingX, AddingY);
+add_window.c:696:	    StartMove(tmp_win, tmp_win->frame, tmp_win->title_height,
+add_window.c:712:		    int dx = (tmp_win->attr.width / 4);
+add_window.c:713:		    int dy = (tmp_win->attr.height / 4);
+add_window.c:716:		    if (tmp_win->root == Scr->VirtualDesktop) {
+add_window.c:728:		    dx += (tmp_win->frame_bw + 1);
+add_window.c:729:		    dy += (bw2 + tmp_win->title_height + 1);
+add_window.c:737:		    XWarpPointer (dpy, None, tmp_win->root, 0, 0, 0, 0,
+add_window.c:769:		MoveOutline(tmp_win->root, 0, 0, 0, 0, 0, 0);
+add_window.c:776:		if (tmp_win->root == Scr->VirtualDesktop) {
+add_window.c:802:	    tmp_win->attr.x = AddingX;
+add_window.c:803:	    tmp_win->attr.y = AddingY + tmp_win->title_height;
+add_window.c:804:	    tmp_win->attr.width = AddingW - bw2;
+add_window.c:805:	    tmp_win->attr.height = AddingH - tmp_win->title_height - bw2;
+add_window.c:812:	if (gravy < 0) tmp_win->attr.y -= gravy * tmp_win->title_height;
+add_window.c:815:    tmp_win->frame_x = tmp_win->attr.x + tmp_win->old_bw - tmp_win->frame_bw;
+add_window.c:816:    tmp_win->frame_y = tmp_win->attr.y - tmp_win->title_height +
+add_window.c:817:	tmp_win->old_bw - tmp_win->frame_bw;
+add_window.c:818:    tmp_win->frame_width = tmp_win->attr.width;
+add_window.c:819:    tmp_win->frame_height = tmp_win->attr.height + tmp_win->title_height;
+add_window.c:825:     if ((tmp_win->root == Scr->VirtualDesktop) && 
+add_window.c:826:         ((!FromVirtualDesktop && tmp_win->transient) || 
+add_window.c:827:          (ask_user == FALSE && (tmp_win->hints.flags & PPosition))))
+add_window.c:829:	tmp_win->frame_x += Scr->vdtPositionX;
+add_window.c:830:	tmp_win->frame_y += Scr->vdtPositionY;
+add_window.c:839:    tmpX = tmp_win->frame_x;
+add_window.c:840:    tmp_win->frame_x = -tmpX;	/* this will case a synthetice ConfigureNotify event */
+add_window.c:841:    SetupFrame (tmp_win, tmpX, tmp_win->frame_y,
+add_window.c:842:		tmp_win->frame_width, tmp_win->frame_height, -1, True);
+add_window.c:847:    tmp_win->icon_w = None;
+add_window.c:849:    if (!tmp_win->iconmgr)
+add_window.c:857:    XSaveContext(dpy, tmp_win->w, TwmContext, (caddr_t) tmp_win);
+add_window.c:858:    XSaveContext(dpy, tmp_win->w, ScreenContext, (caddr_t) Scr);
+add_window.c:859:    XSaveContext(dpy, tmp_win->frame, TwmContext, (caddr_t) tmp_win);
+add_window.c:860:    XSaveContext(dpy, tmp_win->frame, ScreenContext, (caddr_t) Scr);
+add_window.c:861:    if (tmp_win->title_height)
+add_window.c:866:	XSaveContext(dpy, tmp_win->title_w, TwmContext, (caddr_t) tmp_win);
+add_window.c:867:	XSaveContext(dpy, tmp_win->title_w, ScreenContext, (caddr_t) Scr);
+add_window.c:869:	    XSaveContext(dpy, tmp_win->titlebuttons[i].window, TwmContext,
+add_window.c:871:	    XSaveContext(dpy, tmp_win->titlebuttons[i].window, ScreenContext,
+add_window.c:874:	if (tmp_win->hilite_w)
+add_window.c:876:	    XSaveContext(dpy, tmp_win->hilite_w, TwmContext, (caddr_t)tmp_win);
+add_window.c:877:	    XSaveContext(dpy, tmp_win->hilite_w, ScreenContext, (caddr_t)Scr);
+add_window.c:981:		XGrabButton(dpy, i, j, tmp_win->w,
+add_window.c:1011:	    XGrabKey(dpy, tmp->keycode, tmp->mods, tmp_win->w, True,
+add_window.c:1016:	    if (tmp_win->icon_w)
+add_window.c:1017:		XGrabKey(dpy, tmp->keycode, tmp->mods, tmp_win->icon_w, True,
+add_window.c:1021:	    if (tmp_win->title_w)
+add_window.c:1022:		XGrabKey(dpy, tmp->keycode, tmp->mods, tmp_win->title_w, True,
+add_window.c:1027:	    XGrabKey(dpy, tmp->keycode, tmp->mods, tmp_win->w, True,
+add_window.c:1029:	    if (tmp_win->icon_w)
+add_window.c:1030:		XGrabKey(dpy, tmp->keycode, tmp->mods, tmp_win->icon_w, True,
+add_window.c:1032:	    if (tmp_win->title_w)
+add_window.c:1033:		XGrabKey(dpy, tmp->keycode, tmp->mods, tmp_win->title_w, True,
+add_window.c:1080:	Scr->hilitePm = XCreateBitmapFromData (dpy, tmp_win->title_w, 
+add_window.c:1089:	    pm = XCreatePixmap (dpy, tmp_win->title_w,
+add_window.c:1092:	    gcv.foreground = tmp_win->title.fore;
+add_window.c:1093:	    gcv.background = tmp_win->title.back;
+add_window.c:1108:	    pm = XCreatePixmap (dpy, tmp_win->title_w,
+add_window.c:1111:            gcv.foreground = tmp_win->title.fore;
+add_window.c:1112:            gcv.background = tmp_win->title.back;
+add_window.c:1134:	attributes.background_pixel = tmp_win->title.fore;
+add_window.c:1140:    w = XCreateWindow (dpy, tmp_win->title_w, 0, Scr->FramePadding,
+add_window.c:1173:    tmp_win->highlightx = (Scr->TBInfo.titlex + tmp_win->name_width);
+add_window.c:1174:    if (tmp_win->hilite_w || Scr->TBInfo.nright > 0) 
+add_window.c:1175:      tmp_win->highlightx += Scr->TitlePadding;
+add_window.c:1176:    tmp_win->rightx = width - Scr->TBInfo.rightoff;
+add_window.c:1177:    if (squeeze && tmp_win->squeeze_info) {
+add_window.c:1178:	int rx = (tmp_win->highlightx + 
+add_window.c:1179:		  (tmp_win->hilite_w
+add_window.c:1183:	if (rx < tmp_win->rightx) tmp_win->rightx = rx;
+add_window.c:1256:    if (tmp_win->title_height == 0)
+add_window.c:1258:	tmp_win->hilite_w = 0;
+add_window.c:1267:    ComputeWindowTitleOffsets (tmp_win, tmp_win->attr.width, False);
+add_window.c:1270:    rightx = tmp_win->rightx;
+add_window.c:1273:    attributes.background_pixel = tmp_win->title.back;
+add_window.c:1274:    attributes.border_pixel = tmp_win->title.fore;
+add_window.c:1281:    tmp_win->titlebuttons = NULL;
+add_window.c:1284:	tmp_win->titlebuttons = (TBWindow *) malloc (nb * sizeof(TBWindow));
+add_window.c:1285:	if (!tmp_win->titlebuttons) {
+add_window.c:1293:	    for (tb = Scr->TBInfo.head, tbw = tmp_win->titlebuttons; tb;
+add_window.c:1305:		tbw->window = XCreateWindow (dpy, tmp_win->title_w, x, y, h, h,
+add_window.c:1315:    tmp_win->hilite_w = (tmp_win->titlehighlight 
+add_window.c:1318:    XMapSubwindows(dpy, tmp_win->title_w);
+add_window.c:1319:    if (tmp_win->hilite_w)
+add_window.c:1320:      XUnmapWindow(dpy, tmp_win->hilite_w);
+add_window.c:1589:    if (tmp_win->sticky)
+add_window.c:1593:    XChangeProperty (dpy, tmp_win->w, _XA_TWM_FLAGS, _XA_TWM_FLAGS, 32, 
+add_window.c:1604:    XGetWindowProperty (dpy, tmp_win->w, _XA_TWM_USER_MENU, 0L, 200L, False,
+add_window.c:1606:			&bytesafter, (unsigned char **)&tmp_win->user_menu);
+add_window.c:1608:    if (tmp_win->user_menu != NULL) {
+add_window.c:1610:	       tmp_win->user_menu,
+add_window.c:1611:	       tmp_win->full_name);
+iconmgr.c:397:    tmp_win->list = NULL;
+iconmgr.c:399:    if (tmp_win->iconmgr || tmp_win->transient || Scr->NoIconManagers)
+iconmgr.c:402:    if (LookInList(Scr->IconMgrNoShow, tmp_win->full_name, &tmp_win->class))
+iconmgr.c:405:	!LookInList(Scr->IconMgrShow, tmp_win->full_name, &tmp_win->class))
+iconmgr.c:407:    if ((ip = (IconMgr *)LookInList(Scr->IconMgrs, tmp_win->full_name,
+iconmgr.c:408:	    &tmp_win->class)) == NULL)
+iconmgr.c:425:    GetColorFromList(Scr->IconManagerFL, tmp_win->full_name, &tmp_win->class,
+iconmgr.c:427:    GetColorFromList(Scr->IconManagerBL, tmp_win->full_name, &tmp_win->class,
+iconmgr.c:429:    GetColorFromList(Scr->IconManagerHighlightL, tmp_win->full_name,
+iconmgr.c:430:	&tmp_win->class, &tmp->highlight);
+iconmgr.c:477:    tmp_win->list = tmp;
+iconmgr.c:521:	    if ((*compar)(tmp_win->icon_name, tmp1->twm->icon_name) < 0)
+iconmgr.c:575:    if (tmp_win->list == NULL)
+iconmgr.c:578:    tmp = tmp_win->list;
+iconmgr.c:579:    tmp_win->list = NULL;
+icons.c:172:	if (tmp_win->root == Scr->VirtualDesktop) {
+icons.c:210:    if (tmp_win->wmhints && (tmp_win->wmhints->flags & IconPositionHint))
+icons.c:213:    if (tmp_win->icon_moved) {
+icons.c:214:	if (!XGetGeometry (dpy, tmp_win->icon_w, &JunkRoot, &defx, &defy,
+icons.c:232:    if (tmp_win->root == Scr->VirtualDesktop) {
+icons.c:238:	tmp_win->icon_moved = FALSE;	/* since we've restored it */
+icons.c:394:    FB(tmp_win->iconc.fore, tmp_win->iconc.back);
+icons.c:396:    tmp_win->forced = FALSE;
+icons.c:397:    tmp_win->icon_not_ours = FALSE;
+icons.c:407:	icon_name = LookInNameList(Scr->IconNames, tmp_win->full_name);
+icons.c:409:	    icon_name = LookInList(Scr->IconNames, tmp_win->full_name,
+icons.c:410:				   &tmp_win->class);
+icons.c:453:	    pm = XCreatePixmap(dpy, Scr->Root, tmp_win->icon_width,
+icons.c:454:				tmp_win->icon_height, Scr->d_depth);
+icons.c:459:			   0,0, tmp_win->icon_width, tmp_win->icon_height,
+icons.c:463:			  tmp_win->icon_width, tmp_win->icon_height,
+icons.c:466:	    tmp_win->forced = TRUE;
+icons.c:474:    if (pm == None && tmp_win->wmhints &&
+icons.c:475:	tmp_win->wmhints->flags & IconPixmapHint) {
+icons.c:477:	XGetGeometry(dpy,   tmp_win->wmhints->icon_pixmap,
+icons.c:479:		     (unsigned int *)&tmp_win->icon_width,
+icons.c:480:		     (unsigned int *)&tmp_win->icon_height,
+icons.c:484:			   tmp_win->icon_width, tmp_win->icon_height,
+icons.c:487:	XCopyPlane(dpy, tmp_win->wmhints->icon_pixmap, pm, Scr->NormalGC,
+icons.c:488:	    0,0, tmp_win->icon_width, tmp_win->icon_height, 0, 0, 1 );
+icons.c:498:	icon_name = LookInNameList(Scr->IconNames, tmp_win->full_name);
+icons.c:500:	    icon_name = LookInList(Scr->IconNames, tmp_win->full_name,
+icons.c:501:				   &tmp_win->class);
+icons.c:543:			 (unsigned int *)&tmp_win->icon_width,
+icons.c:544:			 (unsigned int *)&tmp_win->icon_height,
+icons.c:547:			       tmp_win->icon_width, tmp_win->icon_height,
+icons.c:553:			   tmp_win->icon_width, tmp_win->icon_height,
+icons.c:557:			  tmp_win->icon_width, tmp_win->icon_height,
+icons.c:566:	tmp_win->icon_width = Scr->UnknownWidth;
+icons.c:567:	tmp_win->icon_height = Scr->UnknownHeight;
+icons.c:569:	pm = XCreatePixmap(dpy, Scr->Root, tmp_win->icon_width,
+icons.c:570:	    tmp_win->icon_height, Scr->d_depth);
+icons.c:574:	    0,0, tmp_win->icon_width, tmp_win->icon_height, 0, 0, 1 );
+icons.c:582:	tmp_win->icon_height = 0;
+icons.c:583:	tmp_win->icon_width = 0;
+icons.c:584:	tmp_win->icon_title = True;
+icons.c:591:    if (tmp_win->icon_title) {
+icons.c:592:	tmp_win->icon_w_width = XTextWidth(Scr->IconFont.font,
+icons.c:593:	    tmp_win->icon_name, strlen(tmp_win->icon_name));
+icons.c:595:	tmp_win->icon_w_width += 6;
+icons.c:597:    if (tmp_win->icon_w_width < tmp_win->icon_width) {
+icons.c:598:	tmp_win->icon_x = (tmp_win->icon_width - tmp_win->icon_w_width)/2;
+icons.c:599:	tmp_win->icon_x += 3;
+icons.c:600:	tmp_win->icon_w_width = tmp_win->icon_width;
+icons.c:602:	tmp_win->icon_x = 3;
+icons.c:604:    tmp_win->icon_y = tmp_win->icon_height + Scr->IconFont.height;
+icons.c:605:    tmp_win->icon_w_height = tmp_win->icon_height;
+icons.c:606:    if (tmp_win->icon_title)
+icons.c:607:	tmp_win->icon_w_height += Scr->IconFont.height + 4;
+icons.c:610:    if (tmp_win->wmhints && tmp_win->wmhints->flags & IconWindowHint) {
+icons.c:611:	tmp_win->icon_w = tmp_win->wmhints->icon_window;
+icons.c:612:	if (tmp_win->forced ||
+icons.c:613:	    XGetGeometry(dpy, tmp_win->icon_w, &JunkRoot, &JunkX, &JunkY,
+icons.c:614:			 (unsigned int *)&tmp_win->icon_w_width,
+icons.c:615:			 (unsigned int *)&tmp_win->icon_w_height,
+icons.c:617:	    tmp_win->icon_w = None;
+icons.c:618:	    tmp_win->wmhints->flags &= ~IconWindowHint;
+icons.c:620:	    tmp_win->icon_not_ours = TRUE;
+icons.c:624:	    if (Scr->VirtualDesktop && (!tmp_win->sticky || !Scr->StickyAbove))
+icons.c:625:		XReparentWindow (dpy, tmp_win->wmhints->icon_window,
+icons.c:626:				 tmp_win->root,
+icons.c:627:				 tmp_win->icon_x, tmp_win->icon_y);
+icons.c:630:	tmp_win->icon_w = None;
+icons.c:633:    if (tmp_win->icon_w == None) {
+icons.c:634:	tmp_win->icon_w =
+icons.c:635:	  XCreateSimpleWindow(dpy, tmp_win->root, 0,0,
+icons.c:636:			      tmp_win->icon_w_width, tmp_win->icon_w_height,
+icons.c:637:			      Scr->IconBorderWidth, tmp_win->icon_border,
+icons.c:638:			      tmp_win->iconc.back);
+icons.c:643:	tmp_win->virtualIcon =
+icons.c:645:		      tmp_win->icon_w_width, tmp_win->icon_w_height,
+icons.c:646:		      tmp_win->virtual.back, tmp_win->icon_border);
+icons.c:648:    XSelectInput (dpy, tmp_win->icon_w,
+icons.c:652:    tmp_win->icon_bm_w = None;
+icons.c:654:	(! (tmp_win->wmhints && tmp_win->wmhints->flags & IconWindowHint))) {
+icons.c:658:	if (tmp_win->icon_w_width == tmp_win->icon_width)
+icons.c:661:	    x = (tmp_win->icon_w_width - tmp_win->icon_width)/2;
+icons.c:663:	tmp_win->icon_bm_w = XCreateWindow (dpy, tmp_win->icon_w, x, y,
+icons.c:664:					    (unsigned int)tmp_win->icon_width,
+icons.c:665:					    (unsigned int)tmp_win->icon_height,
+icons.c:675:    if (tmp_win->wmhints &&
+icons.c:676:	tmp_win->wmhints->flags & IconPositionHint) {
+icons.c:677:	final_x = tmp_win->wmhints->icon_x;
+icons.c:678:	final_y = tmp_win->wmhints->icon_y;
+icons.c:683:    if (tmp_win->root == Scr->Root) {
+icons.c:685:	    final_x = Scr->MyDisplayWidth - tmp_win->icon_w_width -
+icons.c:689:	    final_y = Scr->MyDisplayHeight - tmp_win->icon_height -
+icons.c:695:    tmp_win->iconified = TRUE;
+icons.c:700:	XShapeCombineMask(dpy, tmp_win->icon_w, ShapeBounding, 
+icons.c:705:	titlebox[0].width = tmp_win->icon_w_width + 2 * Scr->IconBorderWidth;
+icons.c:706:	XShapeCombineRectangles(dpy, tmp_win->icon_w, ShapeBounding,
+icons.c:707:			 0, tmp_win->icon_height+4,  
+icons.c:713:	XShapeCombineMask(dpy, tmp_win->icon_w, ShapeClip, 
+icons.c:718:	titlebox[0].width = tmp_win->icon_w_width;
+icons.c:719:	XShapeCombineRectangles(dpy, tmp_win->icon_w, ShapeClip,
+icons.c:720:			 0, tmp_win->icon_height+4,  
+icons.c:725:    XMapSubwindows(dpy, tmp_win->icon_w);
+icons.c:727:    XSaveContext(dpy, tmp_win->icon_w, TwmContext, (caddr_t)tmp_win);
+icons.c:728:    XSaveContext(dpy, tmp_win->icon_w, ScreenContext, (caddr_t)Scr);
+icons.c:729:    XDefineCursor(dpy, tmp_win->icon_w, Scr->IconCursor);
+menus.c:1269:		 tmp_win = tmp_win->next, count++) ;
+menus.c:1273:		 tmp_win = tmp_win->next, loop++)
+menus.c:1297:		   tmp_win = tmp_win->next) {
+menus.c:1298:		  AddToMenu(menu, tmp_win->name, (char *) tmp_win,
+menus.c:1521:	    if (tmp_win->mapped) {
+menus.c:1523:		tmp_win->mapped = FALSE;
+menus.c:1525:		if (tmp_win->icon)
+menus.c:1529:		tmp_win->mapped = TRUE;
+menus.c:1590:	    if (tmp_win->sticky) {
+menus.c:1593:			tmp_win->frame, Scr->VirtualDesktop,
+menus.c:1594:			tmp_win->frame_x + Scr->vdtPositionX,
+menus.c:1595:			tmp_win->frame_y + Scr->vdtPositionY);
+menus.c:1596:		    tmp_win->frame_x += Scr->vdtPositionX;
+menus.c:1597:		    tmp_win->frame_y += Scr->vdtPositionY;
+menus.c:1598:		    XMoveWindow(dpy, tmp_win->virtualWindow,
+menus.c:1599:			tmp_win->frame_x / Scr->PannerScale,
+menus.c:1600:			tmp_win->frame_y / Scr->PannerScale);
+menus.c:1601:		    if (tmp_win->icon_w) {
+menus.c:1603:			    tmp_win->icon_w, Scr->VirtualDesktop,
+menus.c:1604:			    tmp_win->icon_loc_x + Scr->vdtPositionX,
+menus.c:1605:			    tmp_win->icon_loc_y + Scr->vdtPositionY);
+menus.c:1606:			tmp_win->icon_loc_x += Scr->vdtPositionX;
+menus.c:1607:			tmp_win->icon_loc_y += Scr->vdtPositionY;
+menus.c:1608:			XMoveWindow(dpy, tmp_win->virtualIcon,
+menus.c:1609:			    tmp_win->icon_loc_x / Scr->PannerScale,
+menus.c:1610:			    tmp_win->icon_loc_y / Scr->PannerScale);
+menus.c:1612:		    tmp_win->root = Scr->VirtualDesktop;
+menus.c:1614:		if (!tmp_win->icon)
+menus.c:1615:		    XMapRaised(dpy, tmp_win->virtualWindow);
+menus.c:1616:		else if (tmp_win->virtualIcon)
+menus.c:1617:		    XMapRaised(dpy, tmp_win->virtualIcon);
+menus.c:1618:		tmp_win->sticky = False;
+menus.c:1624:		    XReparentWindow(dpy, tmp_win->frame, Scr->Root,
+menus.c:1625:			tmp_win->frame_x - Scr->vdtPositionX,
+menus.c:1626:			tmp_win->frame_y - Scr->vdtPositionY);
+menus.c:1627:		    tmp_win->frame_x -= Scr->vdtPositionX;
+menus.c:1628:		    tmp_win->frame_y -= Scr->vdtPositionY;
+menus.c:1629:		    if (tmp_win->icon_w) {
+menus.c:1630:			XReparentWindow(dpy, tmp_win->icon_w, Scr->Root,
+menus.c:1631:			    tmp_win->icon_loc_x - Scr->vdtPositionX,
+menus.c:1632:			    tmp_win->icon_loc_y - Scr->vdtPositionY);
+menus.c:1633:			tmp_win->icon_loc_x -= Scr->vdtPositionX;
+menus.c:1634:			tmp_win->icon_loc_y -= Scr->vdtPositionY;
+menus.c:1636:		    tmp_win->root = Scr->Root;
+menus.c:1638:		XUnmapWindow(dpy, tmp_win->virtualWindow);
+menus.c:1639:		if (tmp_win->virtualIcon)
+menus.c:1640:		    XUnmapWindow(dpy, tmp_win->virtualIcon);
+menus.c:1641:		tmp_win->sticky = True;
+menus.c:1660:	    else if (tmp_win->iconmgr)
+menus.c:1661:		SortIconManager(tmp_win->iconmgrp);
+menus.c:1684:	tmp_win->auto_raise = !tmp_win->auto_raise;
+menus.c:1717:	if (w != tmp_win->icon_w) {	/* can't resize icons */
+menus.c:1723:	    if (tmp_win && tmp_win->titlebuttons) {
+menus.c:1726:		for (tbw = tmp_win->titlebuttons; nb > 0; tbw++, nb--) {
+menus.c:1778:	if (context == C_ICON && tmp_win->icon_w) {
+menus.c:1780:	} else if (w != tmp_win->icon_w) {
+menus.c:1806:	if (context == C_ICON && tmp_win->icon_w) {
+menus.c:1807:	    w = tmp_win->icon_w;
+menus.c:1808:	    DragVirtual = tmp_win->virtualIcon;
+menus.c:1812:	} else if (w != tmp_win->icon_w) {
+menus.c:1813:	    XTranslateCoordinates(dpy, w, tmp_win->frame,
+menus.c:1818:	    w = tmp_win->frame;
+menus.c:1819:	    DragVirtual = tmp_win->virtualWindow;
+menus.c:1889:		      tmp_win->icon_moved = TRUE;
+menus.c:1967:			    tmp_win->frame_bw, 
+menus.c:1968:			    moving_icon ? 0 : tmp_win->title_height);
+menus.c:2000:			tmp_win->frame_bw,
+menus.c:2001:			moving_icon ? 0 : tmp_win->title_height);
+menus.c:2063:	if (tmp_win->icon || !tmp_win->mapped ) {
+menus.c:2080:	    virtual = tmp_win->virtualIcon;
+menus.c:2081:	    if (w != tmp_win->icon_w) {
+menus.c:2082:		w = tmp_win->frame;
+menus.c:2083:		virtual = tmp_win->virtualWindow;
+menus.c:2086:	    if (tmp_win->sticky && Scr->VirtualDesktop)
+menus.c:2097:	if (w == tmp_win->icon_w)
+menus.c:2108:	if (w == tmp_win->icon_w)
+menus.c:2119:	if (tmp_win->icon == FALSE) {
+menus.c:2130:		if (tmp_win->hilite_w) XMapWindow (dpy, tmp_win->hilite_w);
+menus.c:2143:	if (tmp_win->iconmgr)
+menus.c:2145:	else if (tmp_win->w == Scr->Panner) {
+menus.c:2147:	    tmp_win->mapped = FALSE;
+menus.c:2150:	    XKillClient(dpy, tmp_win->w);
+menus.c:2157:	if (tmp_win->iconmgr)		/* don't send ourself a message */
+menus.c:2159:	else if (tmp_win->protocols & DoesWmDeleteWindow)
+menus.c:2169:	if (tmp_win->protocols & DoesWmSaveYourself)
+menus.c:2287:		    if (Scr->WarpUnmapped || tmp_win->mapped) {
+menus.c:2288:			if (!tmp_win->mapped) DeIconify (tmp_win);
+menus.c:2319:		if (tmp_win && tmp_win->list) {
+menus.c:2320:		    raisewin = tmp_win->list->iconmgr->twm_win->frame;
+menus.c:2321:		    raiseFrame = tmp_win->list->iconmgr->twm_win;
+menus.c:2322:		    iconwin = tmp_win->list->icon;
+menus.c:2406:	if (context == C_ICON && tmp_win->icon_w)
+menus.c:2407:	    w = XCreateSimpleWindow(dpy, tmp_win->icon_w,
+menus.c:2410:	    w = XCreateSimpleWindow(dpy, tmp_win->frame,
+menus.c:2645:    if (tmp_win->group == tmp_win->w) {
+menus.c:2647:	    if (tmp_win->group == t->group &&
+menus.c:2648:		tmp_win->group != t->w && t->icon) {
+menus.c:2652:		    Zoom(tmp_win->icon_w, t->frame);
+menus.c:2672:    if (tmp_win->icon) {
+menus.c:2673:	if (tmp_win->icon_on)
+menus.c:2674:	    Zoom(tmp_win->icon_w, tmp_win->frame);
+menus.c:2675:	else if (tmp_win->group != 0) {
+menus.c:2677:		if (tmp_win->group == t->w && t->icon_on) {
+menus.c:2678:		    Zoom(t->icon_w, tmp_win->frame);
+menus.c:2686:    tmp_win->mapped = TRUE;
+menus.c:2692:    if (tmp_win->icon_w) {
+menus.c:2696:    if (tmp_win->list)
+menus.c:2697:	XUnmapWindow(dpy, tmp_win->list->icon);
+menus.c:2699:	 LookInList(Scr->WarpCursorL, tmp_win->full_name, &tmp_win->class)) &&
+menus.c:2700:	tmp_win->icon)
+menus.c:2702:    tmp_win->icon = FALSE;
+menus.c:2703:    tmp_win->icon_on = FALSE;
+menus.c:2714:    iconify = ((!tmp_win->iconify_by_unmapping) || tmp_win->transient);
+menus.c:2716:	if (tmp_win->icon_w == None)
+menus.c:2722:    if (tmp_win->list)
+menus.c:2723:	XMapWindow(dpy, tmp_win->list->icon);
+menus.c:2725:    XGetWindowAttributes(dpy, tmp_win->w, &winattrs);
+menus.c:2729:    if (tmp_win->group == tmp_win->w) {
+menus.c:2731:	    if (tmp_win->group == t->group && tmp_win->group != t->w) {
+menus.c:2734:			Zoom(t->icon_w, tmp_win->icon_w);
+menus.c:2736:			Zoom(t->frame, tmp_win->icon_w);
+menus.c:2764:	Zoom(tmp_win->frame, tmp_win->icon_w);
+menus.c:2770:    tmp_win->mapped = FALSE;
+menus.c:2771:    XSelectInput(dpy, tmp_win->w, eventMask & ~StructureNotifyMask);
+menus.c:2773:    XSelectInput(dpy, tmp_win->w, eventMask);
+menus.c:2782:    tmp_win->icon = TRUE;
+menus.c:2784:	tmp_win->icon_on = TRUE;
+menus.c:2786:	tmp_win->icon_on = FALSE;
+menus.c:2882:    data[1] = (unsigned long) (tmp_win->iconify_by_unmapping ? None : 
+menus.c:2883:			   tmp_win->icon_w);
+menus.c:2885:    XChangeProperty (dpy, tmp_win->w, _XA_WM_STATE, _XA_WM_STATE, 32, 
+move.c:94:    StartMove(tmp_win, tmp_win->frame, tmp_win->title_height,
+move.c:99:	     tmp_win->frame_width, tmp_win->frame_height, -1);
+move.c:124:    StartMove(tmp_win, tmp_win->icon_w, 0, &x_root, &y_root, &cancel,
+move.c:189:    if (tmp_win->root != Scr->Root) {
+move.c:190:	XTranslateCoordinates(dpy, Scr->Root, tmp_win->root, dragX, dragY, x_root, y_root, &junkChild);
+move.c:193:    if (!tmp_win->sticky)
+move.c:195:    outlineWindow = tmp_win->root;
+move.c:221:	    if (window == tmp_win->frame)
+move.c:222:		window = tmp_win->virtualWindow;
+move.c:224:		window = tmp_win->virtualIcon;
+move.c:236:	    if (window == tmp_win->virtualWindow)
+move.c:237:		window = tmp_win->frame;
+move.c:239:		window = tmp_win->icon_w;
+move.c:335:	if (tmp_win->root == Scr->VirtualDesktop || tmp_win->root == Scr->Panner) {
+move.c:354:	    if (Scr->VirtualDesktop && Scr->OpaqueMove && !tmp_win->sticky) {
+move.c:356:		    if (window == tmp_win->virtualWindow) {
+move.c:357:			actual = tmp_win->frame;
+move.c:358:			virtual = tmp_win->virtualWindow;
+move.c:361:			actual = tmp_win->icon_w;
+move.c:362:			virtual = tmp_win->virtualIcon;
+move.c:366:		    if (window == tmp_win->frame) {
+move.c:367:			actual = tmp_win->frame;
+move.c:368:			virtual = tmp_win->virtualWindow;
+move.c:371:			actual = tmp_win->icon_w;
+move.c:372:			virtual = tmp_win->virtualIcon;
+resize.c:136:    if (tmp_win->root == Scr->VirtualDesktop) {
+resize.c:142:    v = ((y - dragy - tmp_win->title_height) / 
+resize.c:182:    ResizeWindow = tmp_win->frame;
+resize.c:189:    outlineWindow = tmp_win->root;
+resize.c:190:    if (tmp_win->root != Scr->Root) {
+resize.c:198:    XGetGeometry(dpy, (Drawable) tmp_win->frame, &junkRoot,
+resize.c:202:    dragx += tmp_win->frame_bw;
+resize.c:203:    dragy += tmp_win->frame_bw;
+resize.c:222:    MoveOutline (outlineWindow, dragx - tmp_win->frame_bw,
+resize.c:223:		 dragy - tmp_win->frame_bw, dragWidth + 2 * tmp_win->frame_bw,
+resize.c:224:		 dragHeight + 2 * tmp_win->frame_bw,
+resize.c:225:		 tmp_win->frame_bw, tmp_win->title_height);
+resize.c:248:    outlineWindow = tmp_win->root;
+resize.c:249:    if (tmp_win->root != Scr->Root) {
+resize.c:257:    dragx = x + tmp_win->frame_bw;
+resize.c:258:    dragy = y + tmp_win->frame_bw;
+resize.c:261:    dragWidth = origWidth = w - 2 * tmp_win->frame_bw;
+resize.c:262:    dragHeight = origHeight = h - 2 * tmp_win->frame_bw;
+resize.c:274:	dragx - tmp_win->frame_bw,
+resize.c:275:	dragy - tmp_win->frame_bw,
+resize.c:276:	dragWidth + 2 * tmp_win->frame_bw,
+resize.c:277:	dragHeight + 2 * tmp_win->frame_bw,
+resize.c:278:	tmp_win->frame_bw, tmp_win->title_height);
+resize.c:389:            dragx - tmp_win->frame_bw,
+resize.c:390:            dragy - tmp_win->frame_bw,
+resize.c:391:            dragWidth + 2 * tmp_win->frame_bw,
+resize.c:392:            dragHeight + 2 * tmp_win->frame_bw,
+resize.c:393:	    tmp_win->frame_bw, tmp_win->title_height);
+resize.c:425:    dheight = height - tmp_win->title_height;
+resize.c:432:    if (tmp_win->hints.flags&(PMinSize|PBaseSize) &&
+resize.c:433:	tmp_win->hints.flags & PResizeInc) {
+resize.c:434:	if (tmp_win->hints.flags & PBaseSize) {
+resize.c:435:	    dwidth -= tmp_win->hints.base_width;
+resize.c:436:	    dheight -= tmp_win->hints.base_height;
+resize.c:438:	    dwidth -= tmp_win->hints.min_width;
+resize.c:439:	    dheight -= tmp_win->hints.min_height;
+resize.c:443:    if (tmp_win->hints.flags & PResizeInc) {
+resize.c:444:        dwidth /= tmp_win->hints.width_inc;
+resize.c:445:        dheight /= tmp_win->hints.height_inc;
+resize.c:448:    if (tmp_win->w == Scr->Panner) {
+resize.c:485:    if (dragWidth != tmp_win->frame_width ||
+resize.c:486:        dragHeight != tmp_win->frame_height)
+resize.c:487:            tmp_win->zoomed = ZOOM_NONE;
+resize.c:489:    SetupWindow (tmp_win, dragx - tmp_win->frame_bw, dragy - tmp_win->frame_bw,
+resize.c:492:    if (tmp_win->iconmgr) {
+resize.c:493:	int ncols = tmp_win->iconmgrp->cur_columns;
+resize.c:496:	tmp_win->iconmgrp->width = (int) ((dragWidth *
+resize.c:497:					   (long) tmp_win->iconmgrp->columns)
+resize.c:499:        PackIconManager(tmp_win->iconmgrp);
+resize.c:529:    AddingW = dragWidth + (2 * tmp_win->frame_bw);
+resize.c:530:    AddingH = dragHeight + (2 * tmp_win->frame_bw);
+resize.c:555:    dheight -= tmp_win->title_height;
+resize.c:557:    if (tmp_win->hints.flags & PMinSize) {
+resize.c:558:        minWidth = tmp_win->hints.min_width;
+resize.c:559:        minHeight = tmp_win->hints.min_height;
+resize.c:560:    } else if (tmp_win->hints.flags & PBaseSize) {
+resize.c:561:        minWidth = tmp_win->hints.base_width;
+resize.c:562:        minHeight = tmp_win->hints.base_height;
+resize.c:566:    if (tmp_win->hints.flags & PBaseSize) {
+resize.c:567:	baseWidth = tmp_win->hints.base_width;
+resize.c:568:	baseHeight = tmp_win->hints.base_height;
+resize.c:569:    } else if (tmp_win->hints.flags & PMinSize) {
+resize.c:570:	baseWidth = tmp_win->hints.min_width;
+resize.c:571:	baseHeight = tmp_win->hints.min_height;
+resize.c:576:    if (tmp_win->hints.flags & PMaxSize) {
+resize.c:577:        maxWidth = _min (Scr->MaxWindowWidth, tmp_win->hints.max_width);
+resize.c:578:        maxHeight = _min (Scr->MaxWindowHeight, tmp_win->hints.max_height);
+resize.c:584:    if (tmp_win->hints.flags & PResizeInc) {
+resize.c:585:        xinc = tmp_win->hints.width_inc;
+resize.c:586:        yinc = tmp_win->hints.height_inc;
+resize.c:610:#define maxAspectX tmp_win->hints.max_aspect.x
+resize.c:611:#define maxAspectY tmp_win->hints.max_aspect.y
+resize.c:612:#define minAspectX tmp_win->hints.min_aspect.x
+resize.c:613:#define minAspectY tmp_win->hints.min_aspect.y
+resize.c:614:    if (tmp_win->hints.flags & PAspect) {
+resize.c:645:    *heightp = dheight + tmp_win->title_height;
+resize.c:667: *      The tmp_win->frame_XXX variables should NOT be updated with the
+resize.c:704:      bw = tmp_win->frame_bw; /* -1 means current frame width */
+resize.c:706:    if (tmp_win->iconmgr) {
+resize.c:707:	tmp_win->iconmgrp->width = w;
+resize.c:708:        h = tmp_win->iconmgrp->height + tmp_win->title_height;
+resize.c:716:    if (((x != tmp_win->frame_x || y != tmp_win->frame_y) &&
+resize.c:717:	 (w == tmp_win->frame_width && h == tmp_win->frame_height)) ||
+resize.c:718:	(bw != tmp_win->frame_bw))
+resize.c:728:    reShape = (tmp_win->wShaped ? TRUE : FALSE);
+resize.c:729:    if (tmp_win->squeeze_info) {	/* check for title shaping */
+resize.c:730:	title_width = tmp_win->rightx + Scr->TBInfo.rightoff;
+resize.c:733:	    if (tmp_win->frame_height != h ||
+resize.c:734:	    	tmp_win->frame_width != w ||
+resize.c:735:		tmp_win->frame_bw != bw ||
+resize.c:736:	    	title_width != tmp_win->title_width)
+resize.c:739:	    if (!tmp_win->wShaped) reShape = TRUE;
+resize.c:745:    tmp_win->title_width = title_width;
+resize.c:746:    if (tmp_win->title_height)
+resize.c:747:        tmp_win->title_height = title_height;
+resize.c:749:    if (tmp_win->title_w) {
+resize.c:750:	if (bw != tmp_win->frame_bw) {
+resize.c:752:	    tmp_win->title_x = xwc.x = -bw;
+resize.c:753:	    tmp_win->title_y = xwc.y = -bw;
+resize.c:757:	XConfigureWindow(dpy, tmp_win->title_w, xwcm, &xwc);
+resize.c:760:    tmp_win->attr.width = w;
+resize.c:761:    tmp_win->attr.height = h - tmp_win->title_height;
+resize.c:763:    XMoveResizeWindow (dpy, tmp_win->w, 0, tmp_win->title_height,
+resize.c:764:		       w, h - tmp_win->title_height);
+resize.c:765:    if (tmp_win->w == Scr->Panner)
+resize.c:766:	ResizeDesktop(w, h-tmp_win->title_height);
+resize.c:772:    if (bw != tmp_win->frame_bw) {
+resize.c:773:	frame_wc.border_width = tmp_win->frame_bw = bw;
+resize.c:776:    frame_wc.x = tmp_win->frame_x = x;
+resize.c:777:    frame_wc.y = tmp_win->frame_y = y;
+resize.c:778:    frame_wc.width = tmp_win->frame_width = w;
+resize.c:779:    frame_wc.height = tmp_win->frame_height = h;
+resize.c:781:    XConfigureWindow (dpy, tmp_win->frame, frame_mask, &frame_wc);
+resize.c:783:    if (tmp_win->virtualWindow) {
+resize.c:785:	width = tmp_win->frame_width / Scr->PannerScale;
+resize.c:786:	height = tmp_win->frame_height / Scr->PannerScale;
+resize.c:791:	XMoveResizeWindow(dpy, tmp_win->virtualWindow,
+resize.c:792:	    tmp_win->frame_x / Scr->PannerScale,
+resize.c:793:	    tmp_win->frame_y / Scr->PannerScale,
+resize.c:799:    if (tmp_win->title_height && tmp_win->hilite_w) {
+resize.c:801:	xwc.width = (tmp_win->rightx - tmp_win->highlightx);
+resize.c:807:            xwc.x = tmp_win->highlightx;
+resize.c:811:        XConfigureWindow(dpy, tmp_win->hilite_w, xwcm, &xwc);
+resize.c:833:    client_event.xconfigure.event = tmp_win->w;
+resize.c:834:    client_event.xconfigure.window = tmp_win->w;
+resize.c:835:    client_event.xconfigure.x = (tmp_win->frame_x +
+resize.c:836:				 tmp_win->frame_bw -
+resize.c:837:				 tmp_win->old_bw);
+resize.c:838:    client_event.xconfigure.y = (tmp_win->frame_y +
+resize.c:839:				 tmp_win->frame_bw +
+resize.c:840:				 tmp_win->title_height -
+resize.c:841:				 tmp_win->old_bw);
+resize.c:843:    if (Scr->VirtualDesktop && (!tmp_win->sticky || !Scr->StickyAbove)) {
+resize.c:847:    client_event.xconfigure.width = tmp_win->frame_width;
+resize.c:848:    client_event.xconfigure.height = tmp_win->frame_height -
+resize.c:849:	    tmp_win->title_height;
+resize.c:850:    client_event.xconfigure.border_width = tmp_win->old_bw;
+resize.c:853:    client_event.xconfigure.above = tmp_win->frame;
+resize.c:855:    XSendEvent(dpy, tmp_win->w, False, StructureNotifyMask, &client_event);
+resize.c:882:    XGetGeometry(dpy, (Drawable) tmp_win->frame, &junkRoot,
+resize.c:887:    if (tmp_win->root == Scr->VirtualDesktop) {
+resize.c:895:    if (tmp_win->zoomed == flag) {
+resize.c:896:	dragHeight = tmp_win->save_frame_height;
+resize.c:897:	dragWidth = tmp_win->save_frame_width;
+resize.c:898:	dragx = tmp_win->save_frame_x;
+resize.c:899:	dragy = tmp_win->save_frame_y;
+resize.c:900:	tmp_win->zoomed = ZOOM_NONE;
+resize.c:902:	if (tmp_win->zoomed == ZOOM_NONE) {
+resize.c:903:	    tmp_win->save_frame_x = dragx;
+resize.c:904:	    tmp_win->save_frame_y = dragy;
+resize.c:905:	    tmp_win->save_frame_width = dragWidth;
+resize.c:906:	    tmp_win->save_frame_height = dragHeight;
+resize.c:907:	    tmp_win->zoomed = flag;
+resize.c:909:		tmp_win->zoomed = flag;
+resize.c:911:	frame_bw_times_2 = 2*tmp_win->frame_bw;
+util.c:698:    Window w = (tmp_win ? tmp_win->w : PointerRoot);
+util.c:702:	printf ("Focusing on window \"%s\"\n", tmp_win->full_name);
+vdt.c:167:    if (Scr->VirtualDesktop && !tmp_win->iconmgr)
+vdt.c:169:	XChangeProperty(dpy, tmp_win->w, XA_SWM_ROOT, XA_WINDOW,
+vdt.c:170:	    32, PropModeReplace, (unsigned char *)&tmp_win->root, 1);
+vdt.c:286:    XMapWindow(dpy, tmp_win->w);
+vdt.c:287:    XMapWindow(dpy, tmp_win->frame);
+vdt.c:288:    if (tmp_win->virtualWindow && !tmp_win->sticky)
+vdt.c:289:	XMapWindow(dpy, tmp_win->virtualWindow);
+vdt.c:306:    XUnmapWindow(dpy, tmp_win->frame);
+vdt.c:307:    if (!tmp_win->iconmgr && tmp_win->w != Scr->Panner)
+vdt.c:308:	XUnmapWindow(dpy, tmp_win->w);
+vdt.c:309:    if (tmp_win->virtualWindow && !tmp_win->sticky)
+vdt.c:310:	XUnmapWindow(dpy, tmp_win->virtualWindow);
+vdt.c:327:    XRaiseWindow(dpy, tmp_win->frame);
+vdt.c:328:    if (tmp_win->virtualWindow && !tmp_win->sticky)
+vdt.c:329:	XRaiseWindow(dpy, tmp_win->virtualWindow);
+vdt.c:348:    if (Scr->StickyAbove && tmp_win->sticky && Scr->VirtualDesktop) {
+vdt.c:351:	XConfigureWindow(dpy, tmp_win->frame, CWSibling|CWStackMode, &xwc);
+vdt.c:354:	XLowerWindow(dpy, tmp_win->frame);
+vdt.c:355:    if (tmp_win->virtualWindow && !tmp_win->sticky)
+vdt.c:356:	XLowerWindow(dpy, tmp_win->virtualWindow);
+vdt.c:373:    XMapRaised(dpy, tmp_win->icon_w);
+vdt.c:374:    if (tmp_win->virtualIcon && !tmp_win->sticky)
+vdt.c:375:	XMapRaised(dpy, tmp_win->virtualIcon);
+vdt.c:392:    XUnmapWindow(dpy, tmp_win->icon_w);
+vdt.c:393:    if (tmp_win->virtualIcon && !tmp_win->sticky)
+vdt.c:394:	XUnmapWindow(dpy, tmp_win->virtualIcon);
+vdt.c:411:    XRaiseWindow(dpy, tmp_win->icon_w);
+vdt.c:412:    if (tmp_win->virtualIcon && !tmp_win->sticky)
+vdt.c:413:	XRaiseWindow(dpy, tmp_win->virtualIcon);
+vdt.c:432:    if (Scr->StickyAbove && tmp_win->sticky && Scr->VirtualDesktop) {
+vdt.c:435:	XConfigureWindow(dpy, tmp_win->icon_w, CWSibling|CWStackMode, &xwc);
+vdt.c:438:	XLowerWindow(dpy, tmp_win->icon_w);
+vdt.c:439:    if (tmp_win->virtualIcon && !tmp_win->sticky)
+vdt.c:440:	XLowerWindow(dpy, tmp_win->virtualIcon);
+vdt.c:459:    XMoveWindow(dpy, tmp_win->icon_w, x, y);
+vdt.c:460:    tmp_win->icon_loc_x = x;
+vdt.c:461:    tmp_win->icon_loc_y = y;
+vdt.c:462:    if (tmp_win->virtualIcon)
+vdt.c:463:	XMoveWindow(dpy, tmp_win->virtualIcon,
+vdt.c:961:    tmp_win->root = Scr->Panner;
+vdt.c:966:    if (ev->window == tmp_win->virtualWindow) {
+vdt.c:968:	objWidth = tmp_win->frame_width + 2*tmp_win->frame_bw;
+vdt.c:969:	objHeight = tmp_win->frame_height + 2*tmp_win->frame_bw;
+vdt.c:972:	objWidth = tmp_win->icon_w_width + 2;
+vdt.c:973:	objHeight = tmp_win->icon_w_height + 2;
+vdt.c:976:    StartMove(tmp_win, ev->window, tmp_win->title_height,
+vdt.c:980:    tmp_win->root = Scr->VirtualDesktop;
+vdt.c:985:		 tmp_win->frame_width, tmp_win->frame_height, -1);
+vdt.c:1011:    if (!tmp_win->sticky) {
+vdt.c:1017:	if ((tmp_win->frame_x + tmp_win->frame_width) <= x)
+vdt.c:1018:	    x = tmp_win->frame_x;
+vdt.c:1019:	else if (tmp_win->frame_x >= xr)
+vdt.c:1020:	    x = tmp_win->frame_x;
+vdt.c:1022:	if ((tmp_win->frame_y + tmp_win->frame_height) <= y)
+vdt.c:1023:	    y = tmp_win->frame_y;
+vdt.c:1024:	else if (tmp_win->frame_y >= yb)
+vdt.c:1025:	    y = tmp_win->frame_y;
+vdt.c:1031:	    x = tmp_win->frame_x;
+vdt.c:1032:	    y = tmp_win->frame_y;
+vdt.c:1056:    if (!tmp_win->sticky) {
+vdt.c:1057:	x=tmp_win->frame_x;
+vdt.c:1058:	y=tmp_win->frame_y;
+vdt.c:1060:	if ( x + tmp_win->frame_width < Scr->vdtPositionX + 16 ||
+vdt.c:1062:	     y + tmp_win->frame_height < Scr->vdtPositionY + 16 ||
+vdt.c:1089:	FBF(tmp_win->virtual.fore, tmp_win->virtual.back,
+vdt.c:1092:	XClearArea(dpy, tmp_win->virtualWindow, 1, 1, 9999, Scr->VirtualFont.height, False);
+vdt.c:1093:	XDrawString (dpy, tmp_win->virtualWindow, Scr->NormalGC,
+vdt.c:1095:		     tmp_win->name, strlen(tmp_win->name));
